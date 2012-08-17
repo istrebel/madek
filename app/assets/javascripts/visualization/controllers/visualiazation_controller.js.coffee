@@ -29,6 +29,12 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     layouter.edge_length(options.control_panel_model.get("edge_length"))
     self.methods.restart_layouter()
 
+  options.control_panel_model.on "change:component_separation" , ->
+    console.log "the component_separation has changed"
+    layouter.edge_length(options.control_panel_model.get("edge_length"))
+    self.methods.restart_layouter()
+
+
 
   # setting-up the graph datastructure ###################################################################
   graph.nodes_hash =  {} # hash with id's as given by the database
