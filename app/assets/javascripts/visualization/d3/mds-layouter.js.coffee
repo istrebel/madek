@@ -5,7 +5,7 @@ d3.layout.mds = ->
   nodes = []
   links = []
   component_separation = 5
-  edge_length = 100
+  edge_length = add_set_set_edge_length = 100
   index_id_map = {}
   id_index_map = {}
   A = [] # adjacency matrix
@@ -94,16 +94,15 @@ d3.layout.mds = ->
       index_id_map[i]=nodes[i].id
 
     loop_m n, (i,j) ->
-      console.log "#{i} #{j}"
       A[i][j]= Number.POSITIVE_INFINITY
    
     for link in links
       i = Math.max id_index_map[link.source.id], id_index_map[link.target.id]
       j = Math.min id_index_map[link.source.id], id_index_map[link.target.id]
-      prev_val = A[i][j]
-      new_val = (nodes[i].radius + nodes[j].radius + (if typeof edge_length is 'number' then edge_length else edge_length(link)))
-      A[i][j] = new_val
-      console.log "#{i} #{j}  #{prev_val} #{new_val} #{A[i][j]}"
+      A[i][j] = nodes[i].radius + nodes[j].radius + edge_length
+      if nodes[i].type is 'MediaSet' and nodes[j].type is 'MediaSet'
+        A[i][j] += add_set_set_edge_length
+      console.log A[i][j]
     
     D = floyd_warshall A
 
@@ -167,6 +166,7 @@ d3.layout.mds = ->
     nodes: (x)-> if x? then nodes = x; needs_initialization=true; mds else nodes
     links: (x)-> if x? then links = x; needs_initialization=true; mds else links 
     edge_length: (x)-> if x? then edge_length = x; needs_initialization=true; mds else edge_length
+    add_set_set_edge_length: (x)-> if x? then add_set_set_edge_length = x; needs_initialization=true; mds else add_set_set_edge_length
     component_separation: (x)-> if x? then component_separation =x; needs_initialization=true; mds else component_separation
     reinitialize: -> needs_initialization=true; mds
 

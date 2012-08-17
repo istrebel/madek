@@ -23,6 +23,12 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     layouter.edge_length(options.control_panel_model.get("edge_length"))
     self.methods.restart_layouter()
 
+  options.control_panel_model.on "change:add_set_set_edge_length" , ->
+    console.log "the add_set_set_edge_length has changed"
+    layouter.add_set_set_edge_length(options.control_panel_model.get("add_set_set_edge_length"))
+    self.methods.restart_layouter()
+
+
   options.control_panel_model.on "change:component_separation" , ->
     console.log "the component_separation has changed"
     layouter.component_separation(options.control_panel_model.get("component_separation"))

@@ -25,6 +25,7 @@ window.Visualization.init = ->
 
   control_panel_model = new Visualization.Models.ControlPanel
     edge_length: 100
+    add_set_set_edge_length: 0
     component_separation: 5
     node_radius: 5
     max_set_radius: 25

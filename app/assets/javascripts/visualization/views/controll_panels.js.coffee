@@ -7,6 +7,9 @@ Visualization.Views.ControlPanel = Backbone.View.extend
     <label>Edge-Length: <span id="edge_length_value"></span></label>
     <div id="edge_length"></div>
 
+    <label>Additional Set-Set Edge-Length: <span id="set_set_edge_length_value"></span></label>
+    <div id="add_set_set_edge_length"></div>
+
     <label>Component-Separation: <span id="component_separation_value"></span></label>
     <div id="component_separation"></div>
 
@@ -34,6 +37,19 @@ Visualization.Views.ControlPanel = Backbone.View.extend
       stop: (event,ui) ->
         model.set("edge_length",ui.value)
     $("#edge_length").slider('option','value',model.get("edge_length"))
+
+    $("#add_set_set_edge_length").slider
+      min: 0
+      step: 10
+      max: 200
+      change: (event,ui) ->
+        $("#add_set_set_edge_length_value").html(ui.value)
+      slide: (event,ui) ->
+        $("#add_set_set_edge_length_value").html(ui.value)
+      stop: (event,ui) ->
+        model.set("add_set_set_edge_length",ui.value)
+    $("#add_set_set_edge_length").slider('option','value',model.get("add_set_set_edge_length"))
+
 
     $("#component_separation").slider
       min: 2
