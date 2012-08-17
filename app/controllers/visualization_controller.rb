@@ -10,6 +10,11 @@ class VisualizationController < ApplicationController
     render 'index'
   end
 
+  def my_component
+    binding.pry
+    render 'index'
+  end
+
   def my_sets
     @resources = MediaSet.where(user_id: current_user.id)
     @arcs =  MediaResourceArc.connecting @resources

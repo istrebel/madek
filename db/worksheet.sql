@@ -1,3 +1,20 @@
+
+WITH RECURSIVE pair(p,c) as
+(
+    SELECT parent_id as p, child_id as c FROM media_resource_arcs 
+      WHERE parent_id in (43886)
+       OR child_id in (43886)
+  UNION
+    SELECT parent_id as p, child_id as c FROM pair, media_resource_arcs
+      WHERE parent_id = pair.c
+      OR child_id = pair.p
+) 
+SELECT id FROM media_resource_arcs, pair
+  WHERE media_resource_arcs.parent_id = pair.p
+  AND media_resource_arcs.child_id = pair.c
+  ;
+
+
 ##############################################
 
 SELECT id FROM media_resources WHERE media_resources.id in (
