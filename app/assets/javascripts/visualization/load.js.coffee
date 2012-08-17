@@ -32,6 +32,6 @@ window.Visualization.init = ->
   control_panel_view = new Visualization.Views.ControlPanel
     model: control_panel_model
 
-  Visualization.Objects.visualization_controller = 
+  Visualization.Objects.controller = 
     Visualization.Functions.create_visualization_controller
       control_panel_model: control_panel_model

@@ -53,6 +53,22 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
   graph.N = graph.nodes_array.length
   graph.M = graph.arcs.length
 
+
+  # computing the radii ##################################################################################
+
+  compute_radii= ->
+    node_radius = options.control_panel_model.get("node_radius")
+    max_radius = options.control_panel_model.get("max_set_radius")
+    max_size = _.max( graph.nodes_array.map (x)-> x.size ? 0 )
+    graph.nodes_array.forEach (n)->
+      n.r= 
+        if n.size
+          max_radius * n.size / max_size + node_radius
+        else
+          node_radius
+  compute_radii()
+
+
   # setting-up the svg element ###########################################################################
   svg = d3.select("svg#drawing").attr("width", 800).attr("height", 800)
 
@@ -75,7 +91,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     .data(layouter.nodes()).enter().append("circle").attr("class",(n)->"node #{n.type}").attr("r",10).attr("id",(n)->"resource-#{n.id}")
 
   redraw = ->
-      nodes_vis.attr("cx",(n)->n.x).attr("cy",(n)->n.y)
+      nodes_vis.attr("cx",(n)->n.x).attr("cy",(n)->n.y).attr("r",(n)->n.r)
       links_vis.attr("x1",((e)-> e.source.x)).attr("y1",((e)-> e.source.y))
         .attr("x2",((e)-> e.target.x)).attr("y2",((e)-> e.target.y))
       bbox = state.bbox = Visualization.Functions.bbox  $("#drawing .node")
@@ -101,7 +117,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
   state.prev_stress = Number.MAX_VALUE
   state.current_stress = NaN
   state.stress_improvement = 1
-  state.stress_threshold = 1 / Math.pow(graph.N,2)
+  state.stress_threshold = 0.1 / Math.pow(graph.N,2)
 
   layouter.on "iteration_end", () ->
     console.log "mds-layouter iteration_end #{++state.iteration_count}"
@@ -113,7 +129,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
       console.log "current stress #{state.current_stress}"
       console.log "state.stress_improvement #{state.stress_improvement}"
     if ( state.iteration_count < 10 or state.stress_improvement > state.stress_threshold ) 
-      setTimeout(layouter.iterate,1)
+      setTimeout(layouter.iterate,100)
     else
       self.state.running = false
 
