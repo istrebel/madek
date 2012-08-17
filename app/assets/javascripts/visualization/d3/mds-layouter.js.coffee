@@ -93,17 +93,18 @@ d3.layout.mds = ->
       id_index_map[nodes[i].id] = i 
       index_id_map[i]=nodes[i].id
 
-    for i in [1..n-1]
-      for j in [0..i-1]
-        A[i][j]= Number.POSITIVE_INFINITY
+    loop_m n, (i,j) ->
+      console.log "#{i} #{j}"
+      A[i][j]= Number.POSITIVE_INFINITY
    
     for link in links
       i = Math.max id_index_map[link.source.id], id_index_map[link.target.id]
       j = Math.min id_index_map[link.source.id], id_index_map[link.target.id]
-      A[i][j] = if typeof edge_length is 'number' then edge_length else edge_length(link)
+      prev_val = A[i][j]
+      new_val = (nodes[i].radius + nodes[j].radius + (if typeof edge_length is 'number' then edge_length else edge_length(link)))
+      A[i][j] = new_val
+      console.log "#{i} #{j}  #{prev_val} #{new_val} #{A[i][j]}"
     
-    needs_initialization = false
-
     D = floyd_warshall A
 
     D = replace_infinite_values D
@@ -113,6 +114,8 @@ d3.layout.mds = ->
     set_initial_coordinates_if_not_present()
 
     C = current_distance_matrix()
+
+    needs_initialization = false
 
     event.initalization_done()
 

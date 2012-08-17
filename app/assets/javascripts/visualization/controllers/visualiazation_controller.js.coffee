@@ -12,12 +12,6 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
   state = self.state 
 
 
-  self.methods.restart_layouter = ->
-    unless self.state.running
-      self.state.running = true
-      state.iteration_count = 0
-      layouter.iterate()
-
   _.extend(self,Backbone.Events)
 
   # react on panel_model change events ###################################################################
@@ -72,7 +66,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     max_radius = options.control_panel_model.get("max_set_radius")
     max_size = _.max( graph.nodes_array.map (x)-> x.size ? 0 )
     graph.nodes_array.forEach (n)->
-      n.r= 
+      n.radius= 
         if n.size
           max_radius * n.size / max_size + node_radius
         else
@@ -102,7 +96,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     .data(layouter.nodes()).enter().append("circle").attr("class",(n)->"node #{n.type}").attr("r",10).attr("id",(n)->"resource-#{n.id}")
 
   redraw = ->
-      nodes_vis.attr("cx",(n)->n.x).attr("cy",(n)->n.y).attr("r",(n)->n.r)
+      nodes_vis.attr("cx",(n)->n.x).attr("cy",(n)->n.y).attr("r",(n)->n.radius)
       links_vis.attr("x1",((e)-> e.source.x)).attr("y1",((e)-> e.source.y))
         .attr("x2",((e)-> e.target.x)).attr("y2",((e)-> e.target.y))
       bbox = state.bbox = Visualization.Functions.bbox  $("#drawing .node")
@@ -123,15 +117,19 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     console.log "current stress #{layouter.stress()}"
     redraw()
 
-
-  state.iteration_count = 0
-  state.prev_stress = Number.MAX_VALUE
-  state.current_stress = NaN
-  state.stress_improvement = 1
-  state.stress_threshold = 0.1 / Math.pow(graph.N,2)
+  self.methods.restart_layouter = ->
+    console.log "restarting layouter"
+    state.prev_stress = Number.MAX_VALUE
+    state.current_stress = NaN
+    state.stress_improvement = 1
+    state.stress_threshold = 0.1 / Math.pow(graph.N,2)
+    state.iteration_count = 0
+    unless self.state.running
+      self.state.running = true
+      layouter.iterate()
 
   layouter.on "iteration_end", () ->
-    console.log "mds-layouter iteration_end #{++state.iteration_count}"
+    console.log "mds-layouter iteration_end #{state.iteration_count++}"
     if state.iteration_count % 10 == 0
       redraw()
       state.current_stress = layouter.stress()
@@ -144,8 +142,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     else
       self.state.running = false
 
-  self.state.running = true
-  layouter.iterate()
+  self.methods.restart_layouter()
 
   self
 
