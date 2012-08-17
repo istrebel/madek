@@ -165,6 +165,7 @@ d3.layout.mds = ->
     links: (x)-> if x? then links = x; needs_initialization=true; mds else links 
     edge_length: (x)-> if x? then edge_length = x; needs_initialization=true; mds else edge_length
     component_separation: (x)-> if x? then component_separation =x; needs_initialization=true; mds else component_separation
+    reinitialize: -> needs_initialization=true; mds
 
     iterate: () ->
       event.iteration_start()

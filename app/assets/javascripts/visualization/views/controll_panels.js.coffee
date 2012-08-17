@@ -10,10 +10,10 @@ Visualization.Views.ControlPanel = Backbone.View.extend
     <label>Component-Separation: <span id="component_separation_value"></span></label>
     <div id="component_separation"></div>
 
-    <label>MediaEntry and Min-MediaSet-Radius: <span id="node_radius_value"></span></label>
+    <label>Default Node-Radius: <span id="node_radius_value"></span></label>
     <div id="node_radius"></div>
 
-    <label>Maximal-Set-Radius: <span id="max_set_radius_value"></span></label>
+    <label>Maximal, Additional Radius: <span id="max_set_radius_value"></span></label>
     <div id="max_set_radius"></div>
     </form>
   """
@@ -48,9 +48,9 @@ Visualization.Views.ControlPanel = Backbone.View.extend
     $("#component_separation").slider('option','value',model.get("component_separation"))
 
     $("#node_radius").slider
-      min: 5
-      step: 5
-      max: 25
+      min: 2.5
+      step: 2.5
+      max: 10
       change: (event,ui) ->
         $("#node_radius_value").html(ui.value)
       slide: (event,ui) ->
@@ -60,7 +60,7 @@ Visualization.Views.ControlPanel = Backbone.View.extend
     $("#node_radius").slider('option','value',model.get("node_radius"))
 
     $("#max_set_radius").slider
-      min: 5
+      min: 0
       step: 5
       max: 50
       change: (event,ui) ->

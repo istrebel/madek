@@ -34,6 +34,17 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     layouter.component_separation(options.control_panel_model.get("component_separation"))
     self.methods.restart_layouter()
 
+  options.control_panel_model.on "change:node_radius" , ->
+    console.log "the node_radius has changed"
+    compute_radii()
+    layouter.reinitialize()
+    self.methods.restart_layouter()
+
+  options.control_panel_model.on "change:max_set_radius" , ->
+    console.log "the max_set_radius has changed"
+    compute_radii()
+    layouter.reinitialize()
+    self.methods.restart_layouter()
 
 
   # setting-up the graph datastructure ###################################################################
