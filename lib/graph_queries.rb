@@ -4,6 +4,45 @@ module GraphQueries
 
   class << self
 
+  def connected_user_arcs_query media_resource_ids, user_id
+    "
+      WITH RECURSIVE pair(p,c) as
+      (
+          SELECT parent_id as p, child_id as c FROM media_resource_arcs
+            WHERE 
+              (parent_id in (#{media_resource_ids.join(", ")}) OR child_id in (#{media_resource_ids.join(", ")}))
+            AND EXISTS ( select * from media_resources where parent_id = id  AND media_resources.user_id= '#{user_id}')
+            AND EXISTS ( select * from media_resources where child_id = id  AND media_resources.user_id= '#{user_id}')
+        UNION
+          SELECT parent_id as p, child_id as c FROM pair, media_resource_arcs
+            WHERE (parent_id = pair.c
+            OR parent_id = pair.p
+            OR child_id = pair.p
+            OR child_id = pair.c)
+            AND EXISTS ( select * from media_resources where parent_id = id  AND media_resources.user_id= '#{user_id}')
+            AND EXISTS ( select * from media_resources where child_id = id  AND media_resources.user_id= '#{user_id}')
+      ) 
+      SELECT id FROM media_resource_arcs, pair
+        WHERE media_resource_arcs.parent_id = pair.p
+        AND media_resource_arcs.child_id = pair.c
+    "
+  end
+
+  def connected_user_arcs media_resource_s, user
+    ids = 
+      if media_resource_s.is_a? Array
+        media_resource_s.map(&:id)
+      else
+        [media_resource_s.id]
+      end
+
+    if SQLHelper.adapter_is_postgresql? 
+      MediaResourceArc.where(" id in ( #{connected_user_arcs_query(ids,user.id)} )")
+    else 
+      raise "implement me"
+    end
+  end
+
   def connected_set_arcs_query media_resource_ids
     "
       WITH RECURSIVE pair(p,c) as

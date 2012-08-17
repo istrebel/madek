@@ -17,6 +17,14 @@ class VisualizationController < ApplicationController
     render 'index'
   end
 
+  def my_component
+    connected_user_arcs = GraphQueries.connected_user_arcs MediaResource.find(params[:id]), current_user
+    @resources = MediaResource.where("id in (?) OR id in (?)", connected_user_arcs.map(&:parent_id),connected_user_arcs.map(&:child_id))
+    @arcs =  MediaResourceArc.connecting @resources
+    render 'index'
+  end
+
+
   def my_sets
     @resources = MediaSet.where(user_id: current_user.id)
     @arcs =  MediaResourceArc.connecting @resources
