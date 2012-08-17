@@ -1,9 +1,36 @@
 window.Visualization.Functions.create_visualization_controller= (options) ->
 
-  graph = Visualization.Data.graph = {}
-  state = Visualization.State
+  # the main object we will return
+  self = 
+    methods: {}
+    options: options
+    graph: {}
+    state: {running: false}
 
-  # graph datastructure
+  # shortcuts
+  graph = self.graph 
+  state = self.state 
+
+
+  self.methods.restart_layouter = ->
+    unless self.state.running
+      self.state.running = true
+      state.iteration_count = 0
+      layouter.iterate()
+
+  _.extend(self,Backbone.Events)
+
+  # react on panel_model change events ###################################################################
+  options.control_panel_model.on "change" , ->
+    console.log "the control model changed"
+
+  options.control_panel_model.on "change:edge_length" , ->
+    console.log "the edge_length has changed"
+    layouter.edge_length(options.control_panel_model.get("edge_length"))
+    self.methods.restart_layouter()
+
+
+  # setting-up the graph datastructure ###################################################################
   graph.nodes_hash =  {} # hash with id's as given by the database
   graph.arcs =  []
   $("#graph-data").data("nodes").forEach (n)->
@@ -20,6 +47,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
   graph.N = graph.nodes_array.length
   graph.M = graph.arcs.length
 
+  # setting-up the svg element ###########################################################################
   svg = d3.select("svg#drawing").attr("width", 800).attr("height", 800)
 
   svg_height = ->
@@ -27,7 +55,8 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
   svg_width = ->
     $("#visualization svg").attr("width")
 
-  layouter = Visualization.Objects.layouter = d3.layout.mds()
+  # setting up the layouter ##############################################################################
+  layouter = self.layouter = d3.layout.mds()
 
   layouter.nodes(graph.nodes_array).links(graph.arcs)
 
@@ -62,24 +91,28 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     redraw()
 
 
-  iteration_count = 0
+  state.iteration_count = 0
   state.prev_stress = Number.MAX_VALUE
   state.current_stress = NaN
   state.stress_improvement = 1
   state.stress_threshold = 1 / Math.pow(graph.N,2)
 
   layouter.on "iteration_end", () ->
-    console.log "mds-layouter iteration_end #{iteration_count++}"
-    if iteration_count % 20 == 0
+    console.log "mds-layouter iteration_end #{++state.iteration_count}"
+    if state.iteration_count % 10 == 0
       redraw()
       state.current_stress = layouter.stress()
       state.stress_improvement = (state.prev_stress - state.current_stress)/state.prev_stress
       state.prev_stress = state.current_stress
       console.log "current stress #{state.current_stress}"
       console.log "state.stress_improvement #{state.stress_improvement}"
-    if (state.stress_improvement > state.stress_threshold) 
+    if ( state.iteration_count < 10 or state.stress_improvement > state.stress_threshold ) 
       setTimeout(layouter.iterate,1)
+    else
+      self.state.running = false
 
+  self.state.running = true
   layouter.iterate()
 
- 
+  self
+

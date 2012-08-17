@@ -23,7 +23,15 @@ window.Visualization =
 
 window.Visualization.init = ->
 
-  Visualization.Objects.router = new Visualization.Routers.Router()
-  Backbone.history.start({pushState:true})
-  
-  Visualization.Objects.visualization_controller = Visualization.Functions.create_visualization_controller()
+  control_panel_model = new Visualization.Models.ControlPanel
+      edge_length: 100
+      component_separation: 5
+      node_radius: 5
+      max_set_radius: 25
+
+  control_panel_view = new Visualization.Views.ControlPanel
+    model: control_panel_model
+
+  Visualization.Objects.visualization_controller = 
+    Visualization.Functions.create_visualization_controller
+      control_panel_model: control_panel_model
