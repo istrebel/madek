@@ -7,13 +7,19 @@ WITH RECURSIVE pair(p,c) as
   UNION
     SELECT parent_id as p, child_id as c FROM pair, media_resource_arcs
       WHERE parent_id = pair.c
+      OR parent_id = pair.p
       OR child_id = pair.p
+      OR child_id = pair.c
 ) 
-SELECT id FROM media_resource_arcs, pair
-  WHERE media_resource_arcs.parent_id = pair.p
-  AND media_resource_arcs.child_id = pair.c
-  ;
+SELECT * FROM pair ;
 
+select * from media_resource_arcs where parent_id in ( 43885,43886,43887) ;
+
+  id   | parent_id | child_id | highlight | cover 
+-------+-----------+----------+-----------+-------
+ 32694 |     43885 |    43887 | f         | t
+ 32695 |     43886 |    43887 | f         | t
+ 32696 |     43885 |    43886 | f         | 
 
 ##############################################
 
