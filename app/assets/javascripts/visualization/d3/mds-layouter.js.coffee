@@ -15,24 +15,15 @@ d3.layout.mds = ->
 
   # convenience function to loop over the matrix
   loop_m = (n,f) -> 
-    for i in [1 .. n-1]
-      for j in [0 .. i-1]
-        f(i,j)
-
-  # convenience function for getting matix values by arbitrary index 
-  mvalue = (M,i,j)->
-    if i > j
-      M[i][j]
-    else if i < j
-      M[j][i]
-    else
-      throw new Error "this should never happen"
-
-
-  create_empty_nx0 = (n)->
-    A=[]
     for i in [0 .. n-1]
-      A[i] = []
+      for j in [0 .. n-1]
+        if i isnt j
+          f(i,j)
+
+  create_empty_nxn = (n)->
+    A= new Array(n)
+    for i in [0 .. n-1]
+      A[i] = new Array(n)
     A
 
   clone_2d_array = (A) ->
@@ -43,13 +34,13 @@ d3.layout.mds = ->
 
   floyd_warshall = (A) ->
     D = clone_2d_array A
+    console.log D == A
     for k in [0 .. n-1]
-      for i in [1 .. n-1]
-        for j in [0 .. i-1]
-          if j < k < i  
+      for i in [0 .. n-1]
+        for j in [0 .. n-1]
+          if j isnt k isnt i  
             D[i][j] = Math.min D[i][j], D[i][k] + D[k][j] 
     D
-
 
   replace_infinite_values = (A) ->
     D = clone_2d_array A
@@ -67,7 +58,7 @@ d3.layout.mds = ->
     D
 
   compute_weight_matrix = (D)->
-    W = create_empty_nx0 n
+    W = create_empty_nxn n
     loop_m n,(i,j) -> W[i][j] = Math.pow((1/D[i][j]),2)
     W
 
@@ -88,22 +79,24 @@ d3.layout.mds = ->
     # once done remove A completely, it is essentially for prototyping/debugging
     n = nodes.length
     m = links.length
-    A = create_empty_nx0 n
+    A = create_empty_nxn n
     for i in [0..n-1]
       id_index_map[nodes[i].id] = i 
       index_id_map[i]=nodes[i].id
 
     loop_m n, (i,j) ->
       A[i][j]= Number.POSITIVE_INFINITY
-   
+    for i in [0..n-1]
+      A[i][i]= Number.POSITIVE_INFINITY
+
     for link in links
       i = Math.max id_index_map[link.source.id], id_index_map[link.target.id]
       j = Math.min id_index_map[link.source.id], id_index_map[link.target.id]
       A[i][j] = nodes[i].radius + nodes[j].radius + edge_length
       if nodes[i].type is 'MediaSet' and nodes[j].type is 'MediaSet'
         A[i][j] += add_set_set_edge_length
-      console.log A[i][j]
-    
+      A[j][i] = A[i][j]
+
     D = floyd_warshall A
 
     D = replace_infinite_values D
@@ -119,7 +112,7 @@ d3.layout.mds = ->
     event.initalization_done()
 
   current_distance_matrix = ->
-    M = create_empty_nx0 n
+    M = create_empty_nxn n
     loop_m n, (i,j) ->
       ni = nodes[i]
       nj = nodes[j]
@@ -145,13 +138,13 @@ d3.layout.mds = ->
     for i in [0..n-1]
       sum_wi = 0
       for j in [0..n-1] when i isnt j
-        sum_wi += mvalue W,i,j 
+        sum_wi += W[i][j] 
       for d in ['x','y']
         numerator = 0
         for j in [0..n-1] when i isnt j
           pi = nodes[i][d]
           pj = nodes[j][d]
-          numerator += mvalue(W,i,j) * ( pj + mvalue(D,i,j) * (pi-pj)/( mvalue(C,i,j)))
+          numerator += W[i][j] * ( pj + D[i][j] * (pi-pj)/ C[i][j])
 
         new_pos[d][i] =  numerator / sum_wi
 
