@@ -1,7 +1,7 @@
 class MediaSetsGraphController
 
-  use_mds = true
-  ticks = if use_mds then 100 else 100
+  use_mdsprototype = false
+  ticks = if use_mdsprototype then 100 else 100
 
   el: "section.media_sets_graph"
   start_scale = 1.2
@@ -126,14 +126,12 @@ class MediaSetsGraphController
         nodes[node.id] = node
       for link in json.links
         links.push {source: nodes[link.source_id], target: nodes[link.target_id], type: "suit"}
-      debugger
 
-      if use_mds 
-        @layout = d3.layout.mds()
+      if use_mdsprototype
+        @layout = d3.layout.mdsprototype()
       else
         @layout = d3.layout.force().gravity(0.05).friction(0.4).charge(-300).linkDistance(120).size([@width, @height])
       @layout.nodes(d3.values(nodes)).links(links)
-      debugger
       all_links = @graph.selectAll(".link").data(@layout.links()).enter().append("line").attr("class", "link").attr("marker-end", "url(#suit)")
       all_nodes = @graph.selectAll(".node").data(@layout.nodes()).enter().append("g").attr("class", "node").attr("data-id", ((d)-> return d.id))
       all_nodes.append("rect").attr("width", ((d)-> if MetaDatum.flatten(d.meta_data).title? then MetaDatum.flatten(d.meta_data).title.length*7+24 else 30)).attr("height","26px").attr("y", "-13px").attr("x", "-15px").attr("rx", "5px").attr("ry", "5px")
