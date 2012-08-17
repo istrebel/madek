@@ -4,6 +4,7 @@ d3.layout.mds = ->
   needs_initialization = true
   nodes = []
   links = []
+  component_separation = 5
   edge_length = 100
   index_id_map = {}
   id_index_map = {}
@@ -53,7 +54,7 @@ d3.layout.mds = ->
   replace_infinite_values = (A) ->
     D = clone_2d_array A
     loop_m n,(i,j) ->
-      D[i][j] = (edge_length * 10) if not isFinite(D[i][j])
+      D[i][j] = (edge_length * component_separation) if not isFinite(D[i][j])
 
 #    max_dist = 0
 #    for i in [1 .. n-1]
@@ -163,6 +164,7 @@ d3.layout.mds = ->
     nodes: (x)-> if x? then nodes = x; needs_initialization=true; mds else nodes
     links: (x)-> if x? then links = x; needs_initialization=true; mds else links 
     edge_length: (x)-> if x? then edge_length = x; needs_initialization=true; mds else edge_length
+    component_separation: (x)-> if x? then component_separation =x; needs_initialization=true; mds else component_separation
 
     iterate: () ->
       event.iteration_start()

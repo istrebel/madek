@@ -31,7 +31,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
 
   options.control_panel_model.on "change:component_separation" , ->
     console.log "the component_separation has changed"
-    layouter.edge_length(options.control_panel_model.get("edge_length"))
+    layouter.component_separation(options.control_panel_model.get("component_separation"))
     self.methods.restart_layouter()
 
 
