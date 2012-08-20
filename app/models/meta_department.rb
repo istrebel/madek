@@ -36,7 +36,8 @@ class MetaDepartment < Group
   
 
   def self.setup_ldapdata_from_localfile
-    JSON.parse(File.read("db/ldap.json")) do |entry|
+    JSON.parse(File.read("db/ldap.json")).each do |entry|
+      binding.pry
       r = self.find_or_create_by_ldap_id(:ldap_id => entry["extensionattribute3"].first)
       r.update_attributes(:ldap_name => entry["name"].first, :name => entry["extensionattribute1"].first) 
     end
