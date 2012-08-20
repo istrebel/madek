@@ -1,3 +1,28 @@
+# descendants
+
+SELECT * from media_resources 
+  WHERE media_resources.id = 147
+  AND media_resources.id in (SELECT media_resources.id where media_resources.user_id = 10301)
+UNION
+  (
+  WITH RECURSIVE pair(p,c) AS
+    (
+      SELECT parent_id as p, child_id as c FROM media_resource_arcs 
+          WHERE parent_id in (163)
+          AND parent_id in (SELECT media_resources.id FROM media_resources WHERE media_resources.user_id = 10301)
+          AND child_id in (SELECT media_resources.id FROM media_resources WHERE media_resources.user_id = 10301)
+      UNION
+        SELECT media_resource_arcs.parent_id as p, media_resource_arcs.child_id as c FROM pair, media_resource_arcs
+          WHERE media_resource_arcs.parent_id = pair.c
+          AND media_resource_arcs.parent_id in (SELECT media_resources.id FROM media_resources WHERE media_resources.user_id = 10301)
+    )
+  SELECT * from media_resources  where media_resources.id in (SELECT pair.c from pair)
+  )
+;
+
+ 
+
+##############################################
 
 WITH RECURSIVE pair(p,c) as
 (
