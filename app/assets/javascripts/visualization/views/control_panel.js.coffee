@@ -1,25 +1,6 @@
 Visualization.Views.ControlPanel = Backbone.View.extend
 
-  template: """
-    <h1>Controls</h1>
-    <form>
-
-    <label>Edge-Length: <span id="edge_length_value"></span></label>
-    <div id="edge_length"></div>
-
-    <label>Additional Set-Set Edge-Length: <span id="set_set_edge_length_value"></span></label>
-    <div id="add_set_set_edge_length"></div>
-
-    <label>Component-Separation: <span id="component_separation_value"></span></label>
-    <div id="component_separation"></div>
-
-    <label>Default Node-Radius: <span id="node_radius_value"></span></label>
-    <div id="node_radius"></div>
-
-    <label>Maximal, Additional Radius: <span id="max_set_radius_value"></span></label>
-    <div id="max_set_radius"></div>
-    </form>
-  """
+  template: JST['visualization/templates/control_panel']
 
   initialize: ->
     model = @options.model

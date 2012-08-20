@@ -1,0 +1,35 @@
+h1 Controls
+form
+
+  label 
+    | Edge-Length: 
+    span#edge_length_value  
+  #edge_length
+
+  label
+    | Additional Edge-Length between Sets: 
+    span#add_set_set_edge_length_value
+  #add_set_set_edge_length
+
+  label 
+    | Component-Separation:  
+    span#component_separation_value
+  #component_separation
+
+  label
+    | Default Node-Radius: 
+    span#node_radius_value
+  #node_radius
+
+  label
+    | Additional Radius: 
+    span#max_set_radius_value
+  #max_set_radius
+
+  div 
+    a.button Save Layout and Control Settings
+
+
+
+
+
