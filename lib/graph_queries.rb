@@ -4,6 +4,7 @@ module GraphQueries
 
   class << self
 
+
   def connected_user_arcs_query media_resource_ids, user_id
     "
       WITH RECURSIVE pair(p,c) as

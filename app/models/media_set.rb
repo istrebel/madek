@@ -57,6 +57,29 @@ class MediaSet < MediaResource
     end 
   end
 
+### Descendants #######################################
+  
+  # set condition must be a query that returns media_resources; 
+  # condition is on the inclution of the arcpoints
+  def self.descendants media_set, set_condition=nil
+    where <<-SQL 
+    id in  (
+      WITH RECURSIVE pair(p,c) AS
+      (
+        SELECT parent_id as p, child_id as c FROM media_resource_arcs 
+          WHERE parent_id in (#{media_set.id})
+          #{ "AND parent_id in (#{set_condition.to_sql})" if set_condition }
+          #{ "AND child_id in (#{set_condition.to_sql})" if set_condition }
+        UNION
+          SELECT media_resource_arcs.parent_id as p, media_resource_arcs.child_id as c FROM pair, media_resource_arcs
+          WHERE media_resource_arcs.parent_id = pair.c
+          #{ "AND media_resource_arcs.parent_id in (#{set_condition.to_sql})"  if set_condition }
+      )
+      SELECT pair.c from pair
+    )
+    SQL
+  end
+
 ### Size ##############################################
   
   def size user=nil
