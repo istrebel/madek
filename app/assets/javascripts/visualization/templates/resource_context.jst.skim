@@ -13,7 +13,7 @@
 
   - if @resource.type = 'MediaSet'
      p
-      a target="_blank" href="/visualization/my_decendants_of/#{@resource.id}"
+      a target="_blank" href="/visualization/my_descendants_of/#{@resource.id}"
         | Visualize the 
         span.bolder decendants of this set 
         | in new tab.

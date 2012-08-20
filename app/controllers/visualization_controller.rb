@@ -6,17 +6,6 @@ class VisualizationController < ApplicationController
   def index
   end
 
-  def my_sets_and_direct_descendants
-    render 'index'
-  end
-
-  def my_set_component
-    connected_set_arcs = GraphQueries.connected_set_arcs MediaSet.find(params[:id])
-    @resources = MediaSet.where(user_id: current_user.id).where("id in (?) OR id in (?)", connected_set_arcs.map(&:parent_id),connected_set_arcs.map(&:child_id))
-    @arcs =  MediaResourceArc.connecting @resources
-    render 'index'
-  end
-
   def my_component_with
     connected_user_arcs = GraphQueries.connected_user_arcs MediaResource.find(params[:id]), current_user
     @resources = MediaResource.where("id in (?) OR id in (?)", connected_user_arcs.map(&:parent_id),connected_user_arcs.map(&:child_id))
@@ -24,13 +13,18 @@ class VisualizationController < ApplicationController
     render 'index'
   end
 
-
   def my_sets
     @resources = MediaSet.where(user_id: current_user.id)
-    @arcs =  MediaResourceArc.connecting @resources
+    @arcs = MediaResourceArc.connecting @resources
     render 'index'
   end
 
+  def my_descendants_of
+    set = MediaSet.find(params[:id])
+    @resources = MediaResource.descendants_and_set(set,MediaResource.where("user_id = ?",current_user.id))
+    @arcs = MediaResourceArc.connecting @resources
+    render 'index'
+  end
 
   def my_media_resources
     @resources = MediaResource.where(user_id: current_user.id)
