@@ -7,12 +7,16 @@
       = @resource.title
   p
     a target="_blank" href="/visualization/my_component_with/#{@resource.id}"
-      | Visualize component with this node in new tab.
+      | Visualize the 
+      span.bolder component with this node 
+      | in a new tab.
 
   - if @resource.type = 'MediaSet'
      p
       a target="_blank" href="/visualization/my_decendants_of/#{@resource.id}"
-        | Visualize decendants of this set in new tab.
+        | Visualize the 
+        span.bolder decendants of this set 
+        | in new tab.
 
  
     

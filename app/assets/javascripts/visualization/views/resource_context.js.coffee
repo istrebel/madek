@@ -13,8 +13,6 @@ Visualization.Views.ResourceContext = Backbone.View.extend
     @$el.bind "mouseleave", => @$el.remove()
     $(window).bind "blur",  => @$el.remove()
 
-    
-
   render: ->
     @setElement JST['visualization/templates/resource_context']({resource:@resource})
     $("#visualization").append @$el

@@ -129,7 +129,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     state.prev_stress = Number.MAX_VALUE
     state.current_stress = NaN
     state.stress_improvement = 1
-    state.stress_threshold = 0.1 # 1 / Math.pow(graph.N,2)
+    state.stress_threshold = 0.1 / Math.pow(graph.N,2)
     state.iteration_count = 0
     unless self.state.running
       self.state.running = true
