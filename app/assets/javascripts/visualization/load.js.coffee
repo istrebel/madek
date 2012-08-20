@@ -39,16 +39,20 @@ window.Visualization.init = ->
 
   $('svg circle').live 'click', (e) ->
     console.log arguments
-    node = $(e.currentTarget)
-    return false if node.data("context_menu")? 
-    menu =$("""
-      <div class="context_menu">
-        Thomas
-      </div>
-    """)
-    node.data "context_menu", menu
-    $("#visualization").append menu
-    menu.position
-      my: "bottom center"
-      at: "top center" 
-      of: node
+    svg_node = $(e.currentTarget)
+    resource = Visualization.Objects.controller.graph.nodes_hash[svg_node.data('resource-id')]
+
+    new Visualization.Views.ResourceContext({resource: resource,svg_node: svg_node, event: e})
+
+#    return false if svg_node.data("context_menu")? 
+#    menu =$("""
+#      <div class="context_menu">
+#        Thomas
+#      </div>
+#    """)
+#    svg_node.data "context_menu", menu
+#    $("#visualization").append menu
+#    menu.position
+#      my: "bottom center"
+#      at: "top center" 
+#      of: svg_node

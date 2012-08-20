@@ -99,7 +99,8 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     .data(layouter.links()).enter().append("line").attr("class", "link")
 
   nodes_vis= svg_graph.selectAll("circle.node")
-    .data(layouter.nodes()).enter().append("circle").attr("class",(n)->"node #{n.type}").attr("r",10).attr("id",(n)->"resource-#{n.id}")
+    .data(layouter.nodes()).enter().append("circle").attr("class",(n)->"node #{n.type}").attr("r",10)
+    .attr("id",(n)->"resource-#{n.id}").attr("data-resource-id",(n)->n.id)
 
   redraw = ->
       nodes_vis.attr("cx",(n)->n.x).attr("cy",(n)->n.y).attr("r",(n)->n.radius)
@@ -128,7 +129,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     state.prev_stress = Number.MAX_VALUE
     state.current_stress = NaN
     state.stress_improvement = 1
-    state.stress_threshold = 0.1 / Math.pow(graph.N,2)
+    state.stress_threshold = 0.1 # 1 / Math.pow(graph.N,2)
     state.iteration_count = 0
     unless self.state.running
       self.state.running = true
