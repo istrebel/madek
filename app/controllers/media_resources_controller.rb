@@ -570,75 +570,20 @@ class MediaResourcesController < ApplicationController
 
       format.html
       format.json {
-
-        resources = if favorites == "true"
-            current_user.favorites
-          elsif media_set_id
-            media_set = MediaSet.find(media_set_id)
-            media_set.children
-          else
-            MediaResource
-          end
-
-        resources = resources.where(:id => ids) if ids
-    
-        resources = case type
-          when "media_sets"
-            r = resources.where(:type => "MediaSet")
-            r = r.top_level if top_level
-            r
-          when "media_entries"
-            resources.where(:type => "MediaEntry")
-          when "media_entry_incompletes"
-            resources.where(:type => "MediaEntryIncomplete")
-          else
-            if ids
-              resources.where(:type => ["MediaEntry", "MediaSet", "MediaEntryIncomplete"])
-            else
-              resources.where(:type => ["MediaEntry", "MediaSet"])
-            end
-        end.accessible_by_user(current_user, accessible_action)
+        resources = MediaResource.filter(current_user, {:ids => ids,
+                                                        :favorites => favorites,
+                                                        :media_set_id => media_set_id,
+                                                        :type => type,
+                                                        :top_level => top_level,
+                                                        :accessible_action => accessible_action,
+                                                        :sort => sort,
+                                                        :group => group,
+                                                        :user => user,
+                                                        :not_by_current_user => not_by_current_user,
+                                                        :query => query,
+                                                        :meta_key_id => meta_key_id,
+                                                        :meta_term_id => meta_term_id })
         
-        case sort.to_s
-          when "author"
-            resources = resources.ordered_by_author
-          when "title"
-            resources = resources.ordered_by_title
-          when "updated_at", "created_at"
-            resources = resources.order("media_resources.#{sort} DESC")
-          when "random"
-            if SQLHelper.adapter_is_mysql?
-              resources = resources.order("RAND()")
-            elsif SQLHelper.adapter_is_postgresql? 
-              resources = resources.order("RANDOM()")
-            else
-              raise "SQL Adapter is not supported" 
-            end
-        end
-
-        resources = resources.accessible_by_group(group) if group
-        
-        resources = resources.by_user(user) if user
-        # FIXME use presets and :manage permission
-        if not_by_current_user
-          resources = resources.not_by_user(current_user)
-          case public
-            when "true"
-              resources = resources.where(:view => true)
-            when "false"
-              resources = resources.where(:view => false)
-          end
-        end
-        
-        resources = resources.search(query) unless query.blank?
-
-        if meta_key_id and meta_term_id
-          meta_key = MetaKey.find(meta_key_id)
-          meta_term = meta_key.meta_terms.find(meta_term_id)
-          media_resource_ids = meta_term.meta_data(meta_key).collect(&:media_resource_id)
-          resources = resources.where(:id => media_resource_ids)
-        end
-
         render json: view_context.hash_for_media_resources_with_pagination(resources, {:page => page, :per_page => per_page}, with).to_json
       }
     end

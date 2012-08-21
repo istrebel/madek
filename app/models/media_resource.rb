@@ -4,6 +4,7 @@ class MediaResource < ActiveRecord::Base
   include MediaResourceModules::Arcs
   include MediaResourceModules::MetaData
   include MediaResourceModules::Permissions
+  include MediaResourceModules::Filter
 
 ###############################################################
 
