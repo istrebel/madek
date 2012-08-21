@@ -13,7 +13,7 @@ class RefactorMetaTerms < ActiveRecord::Migration
     sql = <<-SQL
       ALTER SEQUENCE terms_id_seq RENAME TO meta_terms_id_seq;
     SQL
-    execute sql if SQLHelper.adapter_is_postgresql? 
+    #execute sql if SQLHelper.adapter_is_postgresql? 
 
   end
 
