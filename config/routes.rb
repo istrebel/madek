@@ -119,8 +119,8 @@ MAdeK::Application.routes.draw do
     
     resources :media_resources do
       collection do
-        #old filter panel# get :filter
-        #old filter panel# post :filter
+        get :filter
+        post :filter
         post :collection
         post :parents
         delete :parents

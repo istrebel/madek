@@ -710,7 +710,7 @@ class MediaResourcesController < ApplicationController
 
 ###################################################################################
 
-=begin #old filter panel# 
+  #old filter panel# 
   # TODO merge search and filter methods ??
   def filter(query = params[:query],
              type = params[:type],
@@ -721,30 +721,17 @@ class MediaResourcesController < ApplicationController
              meta_term_id = params[:meta_term_id],
              filter = params[:filter] )
 
-    where_type = case type
-      when "media_sets"
-        "MediaSet"
-      when "media_entries"
-        "MediaEntry"
-      else
-        ["MediaEntry", "MediaSet"]
-    end
-    resources = MediaResource.accessible_by_user(current_user).where(:type => where_type)
- 
+    resources = MediaResource.filter(current_user, {:type => type })
+
     if request.post?
 
-      if meta_key_id and meta_term_id
-        meta_key = MetaKey.find(meta_key_id)
-        meta_term = meta_key.meta_terms.find(meta_term_id)
-        media_resource_ids = meta_term.meta_data(meta_key).collect(&:media_resource_id)
-      else
-        if params["MediaEntry"] and params["MediaEntry"]["media_type"]
-          resources = resources.filter_media_file(params["MediaEntry"])
-        end
-        media_resource_ids = filter[:ids].split(',').map(&:to_i) 
+      resources = resources.filter(current_user, {:ids => filter[:ids].split(',').map(&:to_i),
+                                                  :meta_key_id => meta_key_id,
+                                                  :meta_term_id => meta_term_id })
+
+      if params["MediaEntry"] and params["MediaEntry"]["media_type"]
+        resources = resources.filter_media_file(params["MediaEntry"])
       end
-  
-      resources = resources.where(:id => media_resource_ids)
 
       unless params[:owner_id].blank? 
         resources = resources.where("user_id in (?) ", params[:owner_id].map(&:to_i))
@@ -771,7 +758,7 @@ class MediaResourcesController < ApplicationController
 
     else
 
-      @resources = resources.search(query)
+      @resources = resources.filter(current_user, {:query => query })
 
       @owners = User.includes(:person)
         .where("users.id in (#{resources.search(query).select("media_resources.user_id").to_sql}) ")
@@ -789,7 +776,6 @@ class MediaResourcesController < ApplicationController
       end
     end
   end
-=end
 
 end
 
