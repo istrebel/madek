@@ -1,7 +1,6 @@
 class VisualizationController < ApplicationController
   layout 'visualization'
-
-  respond_to 'html'
+  respond_to 'html','json'
 
   def index
   end
@@ -34,8 +33,14 @@ class VisualizationController < ApplicationController
   end
 
   def put
-    binding.pry
-
+     if visualization = Visualization.find_or_falsy(current_user.id,params[:resource_identifier])
+       visualization.update_attribute :control_settings, params[:control_settings]
+     else
+       visualization = Visualization.create user_id: current_user.id, 
+         resource_identifier: params[:resource_identifier], 
+         control_settings: params[:control_settings]
+     end
+     respond_with visualization
   end
 
 end

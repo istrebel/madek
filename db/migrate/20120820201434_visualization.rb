@@ -1,8 +1,8 @@
 class Visualization < ActiveRecord::Migration
   def up
     create_table :visualizations, id: false do |t|
-      t.string :resource_identifier
       t.integer :user_id
+      t.string :resource_identifier
       t.text :control_settings
       t.text :layout
     end
