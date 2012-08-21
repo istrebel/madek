@@ -35,6 +35,7 @@ class VisualizationController < ApplicationController
 
   def put
     binding.pry
+
   end
 
 end

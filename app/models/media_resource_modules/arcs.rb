@@ -37,32 +37,6 @@ module MediaResourceModules
       end
     end
 
-    ### Descendants #######################################
-    
-    # set condition must be a query that returns media_resources; 
-    # condition is on the inclution of the arcpoints
-    def self.descendants_and_self(media_set, resource_condition=nil)
-      where <<-SQL
-      id in  (
-        WITH RECURSIVE pair(p,c) AS
-        (
-          SELECT parent_id as p, child_id as c FROM media_resource_arcs 
-            WHERE parent_id in (#{media_set.id})
-            #{ "AND parent_id in (#{resource_condition.select("media_resources.id").to_sql })" if resource_condition }
-            #{ "AND child_id in (#{resource_condition.select("media_resources.id").to_sql})" if resource_condition }
-          UNION
-            SELECT media_resource_arcs.parent_id as p, media_resource_arcs.child_id as c FROM pair, media_resource_arcs
-            WHERE media_resource_arcs.parent_id = pair.c
-            #{ "AND media_resource_arcs.parent_id in (#{resource_condition.select("media_resources.id").to_sql})"  if resource_condition }
-        )
-        SELECT pair.c from pair
-      )
-        UNION
-      (
-        #{media_set.id}
-      )
-      SQL
-    end
 
   end
 end

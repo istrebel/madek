@@ -70,6 +70,8 @@ gem 'newrelic_rpm', '~> 3.3'
 
 gem 'nokogiri'
 
+gem 'composite_primary_keys'
+
 group :development do
   gem 'thin' # web server (Webrick do not support keep-alive connections)
   gem 'capistrano'
