@@ -14,13 +14,13 @@ class CreateGrouppermissions < ActiveRecord::Migration
     end
 
     change_table :grouppermissions do |t|
-      t.index ref_id(Group)
-      t.index ref_id(MediaResource)
-      t.index [ref_id(Group),ref_id(MediaResource)], unique: true
+      t.index :group_id
+      t.index :media_resource_id
+      t.index [:group_id,:media_resource_id], unique: true
     end
-
-    fkey_cascade_on_delete Grouppermission, Group
-    fkey_cascade_on_delete Grouppermission, MediaResource
+      
+    add_foreign_key :grouppermissions, :groups, dependent: :delete
+    add_foreign_key :grouppermissions, :media_resources, dependent: :delete
 
   end
 

@@ -1,6 +1,7 @@
 --migrations:
 
-select column_name from information_schema.columns where table_name = 'people' order by column_name;
+
+SELECT column_name FROM information_schema.columns WHERE table_name = 'people' ORDER BY column_name;
 
 select count(*) from information_schema.columns where table_name = 'people';
 

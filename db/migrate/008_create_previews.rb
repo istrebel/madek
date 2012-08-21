@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreatePreviews < ActiveRecord::Migration
 
   def up
