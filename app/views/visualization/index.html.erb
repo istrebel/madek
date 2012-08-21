@@ -10,7 +10,11 @@
     nodes: @resources.as_json(only: [:id,:type],methods: [:title,:size] ), 
     arcs: @arcs.as_json(only: [:child_id,:parent_id])} do  %>
   <% end %>
-  <%= content_tag "div", id: "layout-data", data: { resource_identifier: @resource_identifier} do %>
+  <%= content_tag "div", id: "layout-data", data: { 
+    resource_identifier: @resource_identifier,
+    control_settings: @control_settings,
+    layout: @layout 
+    } do %>
   <% end %>
   <svg id="drawing">
   </svg>

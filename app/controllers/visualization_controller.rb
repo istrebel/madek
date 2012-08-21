@@ -21,6 +21,7 @@ class VisualizationController < ApplicationController
   def my_descendants_of
     set = MediaSet.find(params[:id])
     @resource_identifier = "descendants-#{set.id}"
+    set_layout_and_control_variables
     @resources = MediaResource.descendants_and_set(set,MediaResource.where("user_id = ?",current_user.id))
     @arcs = MediaResourceArc.connecting @resources
     render 'index'
@@ -41,6 +42,16 @@ class VisualizationController < ApplicationController
          control_settings: params[:control_settings]
      end
      respond_with visualization
+  end
+
+  def set_layout_and_control_variables
+    if visualization = Visualization.find_or_falsy(current_user.id, @resource_identifier)
+      @control_settings = visualization.control_settings
+      @layout = visualization.layout
+    else
+      @control_settings = {}
+      @layout = {}
+    end
   end
 
 end
