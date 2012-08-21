@@ -765,6 +765,7 @@ class MediaResourcesController < ApplicationController
 
 ###################################################################################
 
+=begin #old filter panel# 
   # TODO merge search and filter methods ??
   def filter(query = params[:query],
              type = params[:type],
@@ -843,6 +844,7 @@ class MediaResourcesController < ApplicationController
       end
     end
   end
+=end
 
 end
 
