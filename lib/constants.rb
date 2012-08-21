@@ -16,9 +16,13 @@ module Constants
     "previews",
     "full_texts",
     #
+    "permission_presets",
+    "grouppermissions",
+    "userpermissions",
+    #
     "copyrights",
-    "meta_data",
     "meta_keys",
+    "meta_data",
     "meta_terms", 
     "meta_keys_meta_terms",
     "meta_context_groups", 
@@ -32,10 +36,6 @@ module Constants
     "meta_data_meta_terms",
     "meta_data_people",
     "meta_data_users",
-    #
-    "permission_presets",
-    "grouppermissions",
-    "userpermissions",
     #
     "settings",
     "usage_terms",
