@@ -1,3 +1,9 @@
+--migrations:
+
+select column_name from information_schema.columns where table_name = 'people' order by column_name;
+
+select count(*) from information_schema.columns where table_name = 'people';
+
 ##############################################
 
 SELECT id FROM media_resources WHERE media_resources.id in (
