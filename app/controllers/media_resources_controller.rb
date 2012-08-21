@@ -580,10 +580,11 @@ class MediaResourcesController < ApplicationController
                                                         :group => group,
                                                         :user => user,
                                                         :not_by_current_user => not_by_current_user,
+                                                        :public => public,
                                                         :query => query,
                                                         :meta_key_id => meta_key_id,
                                                         :meta_term_id => meta_term_id })
-        
+
         render json: view_context.hash_for_media_resources_with_pagination(resources, {:page => page, :per_page => per_page}, with).to_json
       }
     end
@@ -719,35 +720,22 @@ class MediaResourcesController < ApplicationController
              per_page = (params[:per_page] || PER_PAGE.first).to_i,
              meta_key_id = params[:meta_key_id],
              meta_term_id = params[:meta_term_id],
-             filter = params[:filter] )
-
-    resources = MediaResource.filter(current_user, {:type => type })
+             filter = params[:filter],
+             owner_ids = (params[:owner_id] ? params[:owner_id].map(&:to_i) : nil),
+             group_ids = (params[:group_id] ? params[:group_id].map(&:to_i) : nil),
+             permission_presets = (params[:permission_preset] ? params[:permission_preset].map(&:to_i) : nil) )
 
     if request.post?
-
-      resources = resources.filter(current_user, {:ids => filter[:ids].split(',').map(&:to_i),
-                                                  :meta_key_id => meta_key_id,
-                                                  :meta_term_id => meta_term_id })
+      resources = MediaResource.filter(current_user, {:ids => (filter[:ids] ? filter[:ids].split(',').map(&:to_i) : nil),
+                                                      :type => type,
+                                                      :meta_key_id => meta_key_id,
+                                                      :meta_term_id => meta_term_id,
+                                                      :owner_ids => owner_ids,
+                                                      :group_ids => group_ids,
+                                                      :permission_presets => permission_presets })
 
       if params["MediaEntry"] and params["MediaEntry"]["media_type"]
         resources = resources.filter_media_file(params["MediaEntry"])
-      end
-
-      unless params[:owner_id].blank? 
-        resources = resources.where("user_id in (?) ", params[:owner_id].map(&:to_i))
-      end
-
-      unless params[:group_id].blank?
-        resources = resources.where( %Q< media_resources.id  in (
-          #{MediaResource
-             .grouppermissions_not_disallowed(current_user, :view)
-             .where("grouppermissions.group_id in ( ? )",params[:group_id].map(&:to_i))
-             .select("media_resource_id").to_sql})>)
-      end
-
-      unless params[:permission_preset].blank? 
-        presets = PermissionPreset.where(" id in ( ? )",  params[:permission_preset].map(&:to_i))
-        resources = resources.where_permission_presets_and_user presets, current_user
       end
 
       respond_to do |format|
@@ -758,7 +746,8 @@ class MediaResourcesController < ApplicationController
 
     else
 
-      @resources = resources.filter(current_user, {:query => query })
+      @resources = MediaResource.filter(current_user, {:type => type,
+                                                       :query => query })
 
       @owners = User.includes(:person)
         .where("users.id in (#{resources.search(query).select("media_resources.user_id").to_sql}) ")

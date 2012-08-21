@@ -7,9 +7,9 @@ module MediaResourceModules
       
       # returns a chainable collection of media_resources
       def base.filter(current_user, query = {})
-        accepted_keys = [:accessible_action, :favorites, :group, :ids, :media_set_id,
-                         :meta_key_id, :meta_term_id, :not_by_current_user, :query,
-                         :sort, :top_level, :type, :user]
+        accepted_keys = [:accessible_action, :favorites, :group, :group_ids, :ids,
+                         :media_set_id, :meta_key_id, :meta_term_id, :not_by_current_user,
+                         :owner_ids, :permission_presets, :public, :query, :sort, :top_level, :type, :user]
         raise "invalid option" unless query.is_a?(Hash) and (query.keys - accepted_keys).blank?
 
         resources = if query[:favorites] == "true"
@@ -58,13 +58,26 @@ module MediaResourceModules
         end if query[:sort]
 
         resources = resources.accessible_by_group(query[:group]) if query[:group]
-        
+
+        resources = resources.where( %Q< media_resources.id  in (
+          #{MediaResource
+             .grouppermissions_not_disallowed(current_user, :view)
+             .where("grouppermissions.group_id in ( ? )", query[:group_ids])
+             .select("media_resource_id").to_sql})>) unless query[:group_ids].blank?
+
         resources = resources.by_user(query[:user]) if query[:user]
+
+        resources = resources.where(:user_id => query[:owner_ids]) unless query[:owner_ids].blank?
+
+        unless query[:permission_presets].blank? 
+          presets = PermissionPreset.where(:id => query[:permission_presets])
+          resources = resources.where_permission_presets_and_user presets, current_user
+        end
         
         # FIXME use presets and :manage permission
         if query[:not_by_current_user]
           resources = resources.not_by_user(current_user)
-          resources = case public
+          resources = case query[:public]
             when "true"
               resources.where(:view => true)
             when "false"
