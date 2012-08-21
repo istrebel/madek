@@ -28,14 +28,15 @@ module Constants
     "meta_context_groups", 
     "meta_contexts",
     "meta_key_definitions",
-    "edit_sessions",
-    "favorites",
     "keywords",
     "media_sets_meta_contexts",
     "meta_data_meta_departments",
     "meta_data_meta_terms",
     "meta_data_people",
     "meta_data_users",
+    #
+    "edit_sessions",
+    "favorites",
     #
     "settings",
     "usage_terms",
