@@ -21,6 +21,7 @@ class VisualizationController < ApplicationController
 
   def my_descendants_of
     set = MediaSet.find(params[:id])
+    @resource_identifier = "descendants-#{set.id}"
     @resources = MediaResource.descendants_and_set(set,MediaResource.where("user_id = ?",current_user.id))
     @arcs = MediaResourceArc.connecting @resources
     render 'index'
@@ -30,6 +31,10 @@ class VisualizationController < ApplicationController
     @resources = MediaResource.where(user_id: current_user.id)
     @arcs =  MediaResourceArc.connecting @resources
     render 'index'
+  end
+
+  def put
+    binding.pry
   end
 
 end

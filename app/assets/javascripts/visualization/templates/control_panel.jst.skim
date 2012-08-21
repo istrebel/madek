@@ -27,7 +27,8 @@ form
   #max_set_radius
 
   div 
-    a.button Save Layout and Control Settings
+    a#save.button 
+      | Save Layout and Control Settings
 
 
 

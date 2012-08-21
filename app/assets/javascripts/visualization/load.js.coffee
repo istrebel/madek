@@ -44,15 +44,6 @@ window.Visualization.init = ->
 
     new Visualization.Views.ResourceContext({resource: resource,svg_node: svg_node, event: e})
 
-#    return false if svg_node.data("context_menu")? 
-#    menu =$("""
-#      <div class="context_menu">
-#        Thomas
-#      </div>
-#    """)
-#    svg_node.data "context_menu", menu
-#    $("#visualization").append menu
-#    menu.position
-#      my: "bottom center"
-#      at: "top center" 
-#      of: svg_node
+  # set some gloabl stuff
+  Visualization.Objects.control_panel_model = control_panel_model
+  Visualization.Objects.control_panel_view = control_panel_view

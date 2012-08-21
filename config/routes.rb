@@ -10,6 +10,7 @@ MAdeK::Application.routes.draw do
 
   # :action is actually more like a resources that describes part of MediaRsources, such as
   #   my_media_resources or my_sets_and_direct_descendants
+  match 'visualization' => 'visualization#put', via: 'put'
   match 'visualization/:action', controller: 'visualization'
   match 'visualization/:action/:id', controller: 'visualization'
 

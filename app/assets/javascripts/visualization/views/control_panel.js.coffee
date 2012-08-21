@@ -6,6 +6,7 @@ Visualization.Views.ControlPanel = Backbone.View.extend
     model = @options.model
     @el =  $("#controls")
     @render()
+    $("a#save").bind ("click"), @save_layout_and_control_settings
 
     $("#edge_length").slider
       min: 10
@@ -71,4 +72,16 @@ Visualization.Views.ControlPanel = Backbone.View.extend
 
   render: ->
     $(@el).html @template
+
+
+  save_layout_and_control_settings: =>
+    #TODO get the control_panel in a different way
+    data= 
+      control_settings: Visualization.Objects.control_panel_model.attributes
+      resource_identifier: $("#layout-data").data("resource-identifier")
+    $.ajax
+      type: 'PUT'
+      url: "/visualization"
+      data: data
+
 
