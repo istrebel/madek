@@ -1,12 +1,16 @@
 source 'http://rubygems.org'
 source 'http://gems.github.com'
 
+# RAILS
 gem 'rails', '3.2.8'
 
-gem 'memcache-client' #gem 'dalli' #gem 'redis-store'
+# DATABASE
+gem 'foreigner'
+gem 'memcache-client' 
 gem 'mysql2', '~> 0.3.11'  
 gem 'pg'
 
+# THE REST
 gem "coffee-filter", "~> 0.1.1"
 gem "d3_rails", "~> 2.10"
 gem 'RedCloth'
