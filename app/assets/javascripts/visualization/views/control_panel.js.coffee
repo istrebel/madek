@@ -83,6 +83,8 @@ Visualization.Views.ControlPanel = Backbone.View.extend
     $.ajax
       type: 'PUT'
       url: "/visualization"
-      data: data
+      data: JSON.stringify(data)
+      contentType: "application/json"
+      processData: false
 
 
