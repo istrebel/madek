@@ -155,14 +155,13 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
 
   ######################################################################
 
-  self.export_layout ->
+  self.export_layout = ->
     layout = {}
-    for id, node in graph.node_hash
+    for id, node of graph.nodes_hash
       layout[id] = 
         x: node.x
         y: node.y
     layout 
-
 
   self
 

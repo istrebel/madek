@@ -77,6 +77,7 @@ Visualization.Views.ControlPanel = Backbone.View.extend
   save_layout_and_control_settings: =>
     #TODO get the control_panel in a different way
     data= 
+      layout: Visualization.Objects.controller.export_layout()
       control_settings: Visualization.Objects.control_panel_model.attributes
       resource_identifier: $("#layout-data").data("resource-identifier")
     $.ajax

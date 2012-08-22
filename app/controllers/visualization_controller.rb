@@ -34,14 +34,14 @@ class VisualizationController < ApplicationController
   end
 
   def put
-     if visualization = Visualization.find_or_falsy(current_user.id,params[:resource_identifier])
-       visualization.update_attribute :control_settings, params[:control_settings]
-     else
-       visualization = Visualization.create user_id: current_user.id, 
-         resource_identifier: params[:resource_identifier], 
-         control_settings: params[:control_settings]
-     end
-     respond_with visualization
+    visualization =  \
+      Visualization.find_or_falsy(current_user.id,params[:resource_identifier])  \
+      || Visualization.create({user_id: current_user.id, resource_identifier: params[:resource_identifier]})
+
+    visualization.update_attribute :control_settings, params[:control_settings]
+    visualization.update_attribute :layout, params[:layout]
+
+    respond_with visualization
   end
 
   def set_layout_and_control_variables
