@@ -11,11 +11,11 @@ class CreateJoinTables < ActiveRecord::Migration
 
     create_table :meta_data_meta_departments, id: false do |t|
       t.integer :meta_datum_id, null: false
-      t.integer :meta_departement_id, null: false
+      t.integer :meta_department_id, null: false
     end
-    add_index :meta_data_meta_departments, [:meta_datum_id,:meta_departement_id], name: :index_meta_data_meta_departments, unique: true
+    add_index :meta_data_meta_departments, [:meta_datum_id,:meta_department_id], name: :index_meta_data_meta_departments, unique: true
     add_foreign_key :meta_data_meta_departments, :meta_data, dependent: :delete
-    add_foreign_key :meta_data_meta_departments, :groups, column: :meta_departement_id, dependent: :delete
+    add_foreign_key :meta_data_meta_departments, :groups, column: :meta_department_id, dependent: :delete
 
     create_table :meta_data_meta_terms, id: false do |t|
       t.integer :meta_datum_id, null: false
