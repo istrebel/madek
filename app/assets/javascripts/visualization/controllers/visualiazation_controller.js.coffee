@@ -66,6 +66,12 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
   graph.M = graph.arcs.length
 
 
+  # copying saved ayout #################################################################################
+  
+  for id, coord of $("#layout-data").data('layout')
+    graph.nodes_hash[id]?.x = parseFloat(coord.x)
+    graph.nodes_hash[id]?.y = parseFloat(coord.y)
+
   # computing the radii ##################################################################################
 
   compute_radii= ->
