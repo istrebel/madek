@@ -6,6 +6,7 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
     options: options
     graph: {}
     state: {running: false}
+    export_layout: -> # returns the position of the nodes
 
   # shortcuts
   graph = self.graph 
@@ -150,6 +151,18 @@ window.Visualization.Functions.create_visualization_controller= (options) ->
       self.state.running = false
 
   self.methods.restart_layouter()
+
+
+  ######################################################################
+
+  self.export_layout ->
+    layout = {}
+    for id, node in graph.node_hash
+      layout[id] = 
+        x: node.x
+        y: node.y
+    layout 
+
 
   self
 

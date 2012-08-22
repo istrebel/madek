@@ -19,7 +19,6 @@ window.Visualization =
   Views: {}
   State: {}
 
- 
 
 window.Visualization.init = ->
 
