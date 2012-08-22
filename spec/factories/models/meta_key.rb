@@ -11,6 +11,12 @@ FactoryGirl.define do
     meta_datum_object_type "MetaDatumString" 
     is_dynamic nil 
   end
+
+  factory :meta_key_academic_year, class: MetaKey do
+    label 'academic year'
+    meta_datum_object_type 'MetaDatumMetaTerms'
+    is_extensible_list false
+  end
   
   factory :meta_key_author, class: MetaKey do
     label 'author'
